@@ -9,21 +9,15 @@ class DesvitaGallery extends Model
 {
     use HasFactory;
 
-    protected $table = 'desvita_galleries';
     protected $fillable = [
         'destination_id',
-        'image_path',
+        'image',
         'caption',
-        'order'
+        'order',
     ];
 
     public function destination()
     {
-        return $this->belongsTo(DesvitaDestination::class, 'destination_id');
+        return $this->belongsTo(DesvitaDestination::class);
     }
-
-    public function getImageUrlAttribute()
-    {
-        return asset('storage/' . $this->image_path);
-    }
-}
+} 

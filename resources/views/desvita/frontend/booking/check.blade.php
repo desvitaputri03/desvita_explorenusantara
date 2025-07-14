@@ -156,15 +156,27 @@
                     <div class="check-card">
                         <div class="text-center mb-4">
                             <h2 class="section-title">Cek Status Booking</h2>
-                            <p class="text-muted">Masukkan email Anda untuk melihat status booking</p>
+                            <p class="text-muted">Masukkan email atau ID booking Anda untuk melihat status booking</p>
                         </div>
 
-                        <form method="POST" action="{{ route('frontend.booking.check.post') }}">
+                        <form method="POST" action="{{ route('booking.check.post') }}">
                             @csrf
                             <div class="mb-3">
+                                <label for="search_type" class="form-label">Cari Berdasarkan</label>
+                                <select class="form-control" id="search_type" name="search_type" onchange="toggleSearchField()">
+                                    <option value="email">Email</option>
+                                    <option value="booking_id">ID Booking</option>
+                                </select>
+                            </div>
+                            <div class="mb-3" id="email_field">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email" name="email" 
-                                       value="{{ $request->email ?? '' }}" required>
+                                       value="{{ $request->email ?? '' }}">
+                            </div>
+                            <div class="mb-3" id="booking_id_field" style="display: none;">
+                                <label for="booking_id" class="form-label">ID Booking</label>
+                                <input type="number" class="form-control" id="booking_id" name="booking_id" 
+                                       value="{{ $request->booking_id ?? '' }}">
                             </div>
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary btn-custom">
@@ -191,10 +203,10 @@
                                                 <i class="fas fa-users me-2"></i>
                                                 {{ $booking->number_of_people }} orang
                                             </p>
-                                            @if($booking->special_requests)
+                                            @if($booking->notes)
                                             <p class="text-muted mb-0">
                                                 <i class="fas fa-comment me-2"></i>
-                                                {{ $booking->special_requests }}
+                                                {{ $booking->notes }}
                                             </p>
                                             @endif
                                         </div>
@@ -245,5 +257,24 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSearchField() {
+            const searchType = document.getElementById('search_type').value;
+            const emailField = document.getElementById('email_field');
+            const bookingIdField = document.getElementById('booking_id_field');
+            
+            if (searchType === 'email') {
+                emailField.style.display = 'block';
+                bookingIdField.style.display = 'none';
+                document.getElementById('booking_id').removeAttribute('required');
+                document.getElementById('email').setAttribute('required', 'required');
+            } else {
+                emailField.style.display = 'none';
+                bookingIdField.style.display = 'block';
+                document.getElementById('email').removeAttribute('required');
+                document.getElementById('booking_id').setAttribute('required', 'required');
+            }
+        }
+    </script>
 </body>
 </html> 

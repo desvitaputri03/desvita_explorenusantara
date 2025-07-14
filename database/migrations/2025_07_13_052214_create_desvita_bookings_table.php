@@ -13,14 +13,16 @@ return new class extends Migration
     {
         Schema::create('desvita_bookings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('destination_id');
-            $table->unsignedBigInteger('tourist_id');
+            $table->foreignId('destination_id')->constrained('desvita_destinations')->onDelete('cascade');
+            $table->foreignId('tourist_id')->constrained('desvita_tourists')->onDelete('cascade');
             $table->date('booking_date');
-            $table->string('status');
+            $table->integer('number_of_people');
+            $table->decimal('total_price', 10, 2);
+            $table->string('status')->default('pending');
+            $table->text('notes')->nullable();
+            $table->string('payment_proof')->nullable();
+            $table->date('payment_due_date')->nullable(); // Tambahkan kolom batas waktu pembayaran
             $table->timestamps();
-
-            $table->foreign('destination_id')->references('id')->on('desvita_destinations')->onDelete('cascade');
-            $table->foreign('tourist_id')->references('id')->on('desvita_tourists')->onDelete('cascade');
         });
     }
 

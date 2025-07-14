@@ -37,6 +37,7 @@
                         >
                             Log in
                         </a>
+
                     @endauth
                 </nav>
             @endif

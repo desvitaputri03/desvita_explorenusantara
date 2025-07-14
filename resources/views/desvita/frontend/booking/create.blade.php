@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="price-per-person" content="{{ $destination->price }}">
     <title>Booking - {{ $destination->name }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -189,6 +190,9 @@
                         <div class="destination-info">
                             <h3>{{ $destination->name }}</h3>
                             <p class="mb-0">{{ $destination->location }}</p>
+                            <a href="{{ route('destinations.show', $destination) }}" class="btn btn-outline-light btn-sm mt-2">
+                                <i class="fas fa-arrow-left me-1"></i>Kembali ke Detail
+                            </a>
                         </div>
 
                         <!-- Success/Error Messages -->
@@ -212,10 +216,35 @@
                         @endif
 
                         <!-- Booking Form -->
-                        <form action="{{ route('frontend.booking.store', $destination) }}" method="POST">
+                        <form action="{{ route('booking.store') }}" method="POST">
                             @csrf
+                            <input type="hidden" name="destination_id" value="{{ $destination->id }}">
                             
                             <div class="booking-body">
+                                <!-- Price Info Card -->
+                                <div class="price-info-card mb-4 p-4" style="background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
+                                    <h5 class="mb-3">Informasi Booking</h5>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Harga tiket:</span>
+                                        <span class="fw-bold">Rp {{ number_format($destination->price, 0, ',', '.') }}/orang</span>
+                                    </div>
+                                    <div id="priceCalculation" style="display: none;">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>Total pengunjung:</span>
+                                            <span class="fw-bold"><span id="selectedPeople">0</span> orang</span>
+                                        </div>
+                                        <hr class="my-2">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Total biaya:</span>
+                                            <span class="fw-bold text-primary">Rp <span id="totalPrice">0</span></span>
+                                        </div>
+                                        <div class="mt-2 text-muted small">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Informasi lebih lanjut akan dikirim melalui email/telepon
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="name" class="form-label">Nama Lengkap</label>
@@ -274,18 +303,18 @@
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="special_requests" class="form-label">Permintaan Khusus</label>
-                                        <textarea class="form-control @error('special_requests') is-invalid @enderror" 
-                                                  id="special_requests" name="special_requests" rows="3" 
-                                                  placeholder="Contoh: Makanan vegetarian, akses kursi roda, dll">{{ old('special_requests') }}</textarea>
-                                        @error('special_requests')
+                                        <label for="notes" class="form-label">Catatan</label>
+                                        <textarea class="form-control @error('notes') is-invalid @enderror" 
+                                                  id="notes" name="notes" rows="3" 
+                                                  placeholder="Contoh: Makanan vegetarian, akses kursi roda, dll">{{ old('notes') }}</textarea>
+                                        @error('notes')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
 
                                 <div class="d-flex justify-content-between align-items-center mt-4">
-                                    <a href="{{ route('frontend.destinations.show', $destination) }}" class="btn btn-outline-primary btn-custom">
+                                    <a href="{{ route('destinations.show', $destination) }}" class="btn btn-outline-primary btn-custom">
                                         Kembali ke Detail
                                     </a>
                                     <button type="submit" class="btn btn-primary btn-custom">
@@ -308,6 +337,25 @@
         tomorrow.setDate(tomorrow.getDate() + 1);
         const tomorrowStr = tomorrow.toISOString().split('T')[0];
         document.getElementById('booking_date').min = tomorrowStr;
+
+        // Calculate total price
+        document.addEventListener('DOMContentLoaded', function() {
+            const pricePerPerson = Number(document.querySelector('meta[name="price-per-person"]').content);
+            const numberSelect = document.getElementById('number_of_people');
+            const priceCalculation = document.getElementById('priceCalculation');
+            const selectedPeople = document.getElementById('selectedPeople');
+            const totalPriceSpan = document.getElementById('totalPrice');
+
+            numberSelect.addEventListener('change', function() {
+                const numberOfPeople = parseInt(this.value) || 0;
+                const totalPrice = numberOfPeople * pricePerPerson;
+                
+                selectedPeople.textContent = numberOfPeople;
+                totalPriceSpan.textContent = totalPrice.toLocaleString('id-ID');
+                
+                priceCalculation.style.display = numberOfPeople > 0 ? 'block' : 'none';
+            });
+        });
     </script>
 </body>
 </html> 

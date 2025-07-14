@@ -11,7 +11,7 @@ class DesvitaReviewController extends Controller
 {
     public function index()
     {
-        $reviews = DesvitaReview::with(['destination', 'tourist'])->get();
+        $reviews = DesvitaReview::with(['tourist', 'destination'])->latest()->paginate(10);
         return view('desvita.admin.reviews.index', compact('reviews'));
     }
 
@@ -25,21 +25,21 @@ class DesvitaReviewController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'destination_id' => 'required|exists:desvita_destinations,id',
             'tourist_id' => 'required|exists:desvita_tourists,id',
+            'destination_id' => 'required|exists:desvita_destinations,id',
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:1000'
+            'comment' => 'required|string',
         ]);
 
         DesvitaReview::create($request->all());
 
         return redirect()->route('admin.reviews.index')
-            ->with('success', 'Review berhasil ditambahkan!');
+            ->with('success', 'Review created successfully');
     }
 
     public function show(DesvitaReview $review)
     {
-        $review->load(['destination', 'tourist']);
+        $review->load(['tourist', 'destination']);
         return view('desvita.admin.reviews.show', compact('review'));
     }
 
@@ -53,16 +53,16 @@ class DesvitaReviewController extends Controller
     public function update(Request $request, DesvitaReview $review)
     {
         $request->validate([
-            'destination_id' => 'required|exists:desvita_destinations,id',
             'tourist_id' => 'required|exists:desvita_tourists,id',
+            'destination_id' => 'required|exists:desvita_destinations,id',
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:1000'
+            'comment' => 'required|string',
         ]);
 
         $review->update($request->all());
 
         return redirect()->route('admin.reviews.index')
-            ->with('success', 'Review berhasil diperbarui!');
+            ->with('success', 'Review updated successfully');
     }
 
     public function destroy(DesvitaReview $review)
@@ -70,6 +70,6 @@ class DesvitaReviewController extends Controller
         $review->delete();
 
         return redirect()->route('admin.reviews.index')
-            ->with('success', 'Review berhasil dihapus!');
+            ->with('success', 'Review deleted successfully');
     }
-}
+} 

@@ -13,13 +13,6 @@
         </a>
     </div>
 
-    @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    @endif
-
     <div class="row">
         <div class="col-md-8">
             <div class="card">
@@ -29,9 +22,6 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h6 class="text-muted">Destinasi</h6>
-                            <p class="mb-3">{{ $review->destination->name }}</p>
-                            
                             <h6 class="text-muted">Wisatawan</h6>
                             <p class="mb-3">{{ $review->tourist->name }}</p>
                             
@@ -39,29 +29,27 @@
                             <p class="mb-3">{{ $review->tourist->email }}</p>
                         </div>
                         <div class="col-md-6">
+                            <h6 class="text-muted">Destinasi</h6>
+                            <p class="mb-3">{{ $review->destination->name }}</p>
+                            
                             <h6 class="text-muted">Rating</h6>
                             <p class="mb-3">
                                 @for($i = 1; $i <= 5; $i++)
                                     @if($i <= $review->rating)
                                         <i class="fas fa-star text-warning"></i>
                                     @else
-                                        <i class="far fa-star text-muted"></i>
+                                        <i class="far fa-star text-warning"></i>
                                     @endif
                                 @endfor
                                 <span class="ms-2">({{ $review->rating }}/5)</span>
                             </p>
-                            
-                            <h6 class="text-muted">Dibuat Pada</h6>
-                            <p class="mb-3">{{ $review->created_at->format('d/m/Y H:i') }}</p>
                         </div>
                     </div>
                     
-                    @if($review->comment)
                     <div class="mt-3">
                         <h6 class="text-muted">Komentar</h6>
                         <p class="mb-0">{{ $review->comment }}</p>
                     </div>
-                    @endif
                 </div>
             </div>
         </div>

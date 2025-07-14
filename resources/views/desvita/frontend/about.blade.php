@@ -259,7 +259,7 @@
                 </div>
 
                 <div class="text-center mt-4">
-                    <a href="{{ route('frontend.destinations') }}" class="btn btn-primary btn-lg">
+                    <a href="{{ route('destinations.index') }}" class="btn btn-primary btn-lg">
                         <i class="fas fa-map me-2"></i>Jelajahi Destinasi
                     </a>
                 </div>

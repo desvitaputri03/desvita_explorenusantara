@@ -10,11 +10,9 @@
                 <h5 class="mb-0"><i class="fas fa-key me-2"></i>Ubah Password Admin</h5>
             </div>
             <div class="card-body">
-                @if(session('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
-                @endif
-                <form method="POST" action="{{ route('admin.settings.update') }}">
+                <form method="POST" action="{{ route('admin.profile.update-password') }}">
                     @csrf
+                    @method('PUT')
                     <div class="mb-3">
                         <label for="current_password" class="form-label">Password Lama</label>
                         <input type="password" class="form-control @error('current_password') is-invalid @enderror" id="current_password" name="current_password" required>

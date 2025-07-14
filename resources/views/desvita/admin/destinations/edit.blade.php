@@ -12,13 +12,6 @@
     </a>
 </div>
 
-@if(session('success'))
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
-@endif
-
 <div class="card">
     <div class="card-body">
         <form action="{{ route('admin.destinations.update', $destination) }}" method="POST" enctype="multipart/form-data">
@@ -30,7 +23,7 @@
                     <div class="mb-3">
                         <label for="name" class="form-label">Nama Destinasi</label>
                         <input type="text" name="name" id="name" class="form-control" 
-                               value="{{ $destination->name }}" required>
+                               value="{{ old('name', $destination->name) }}" required>
                         @error('name')
                         <div class="text-danger">{{ $message }}</div>
                         @enderror
@@ -41,7 +34,7 @@
                     <div class="mb-3">
                         <label for="location" class="form-label">Lokasi</label>
                         <input type="text" name="location" id="location" class="form-control" 
-                               value="{{ $destination->location }}" required>
+                               value="{{ old('location', $destination->location) }}" required>
                         @error('location')
                         <div class="text-danger">{{ $message }}</div>
                         @enderror
@@ -51,7 +44,7 @@
             
             <div class="mb-3">
                 <label for="description" class="form-label">Deskripsi</label>
-                <textarea name="description" id="description" class="form-control" rows="4" required>{{ $destination->description }}</textarea>
+                <textarea name="description" id="description" class="form-control" rows="4" required>{{ old('description', $destination->description) }}</textarea>
                 @error('description')
                 <div class="text-danger">{{ $message }}</div>
                 @enderror
@@ -63,11 +56,11 @@
                 <div class="mb-2">
                     <img src="{{ asset('storage/' . $destination->image) }}" 
                          alt="{{ $destination->name }}" 
-                         style="max-width: 200px; height: auto; border-radius: 8px;">
+                         style="max-width: 200px; border-radius: 8px;">
                 </div>
                 @endif
                 <input type="file" name="image" id="image" class="form-control" accept="image/*">
-                <small class="text-muted">Biarkan kosong jika tidak ingin mengubah gambar</small>
+                <small class="text-muted">Format: JPG, PNG, GIF. Maksimal 2MB. Biarkan kosong jika tidak ingin mengubah gambar.</small>
                 @error('image')
                 <div class="text-danger">{{ $message }}</div>
                 @enderror
@@ -75,7 +68,7 @@
             
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save me-2"></i>Update Destinasi
+                    <i class="fas fa-save me-2"></i>Simpan Perubahan
                 </button>
                 <a href="{{ route('admin.destinations.index') }}" class="btn btn-secondary">
                     <i class="fas fa-times me-2"></i>Batal

@@ -11,29 +11,34 @@ class DesvitaTouristSeeder extends Seeder
     {
         $tourists = [
             [
-                'name' => 'Ahmad Rizki',
-                'email' => 'ahmad.rizki@email.com',
-                'phone' => '081234567890'
+                'name' => 'Rina Putri',
+                'email' => 'rina@gmail.com',
+                'phone' => '082345678901',
+                'address' => 'Jl. Sudirman No. 123, Payakumbuh'
             ],
             [
-                'name' => 'Siti Nurhaliza',
-                'email' => 'siti.nurhaliza@email.com',
-                'phone' => '081234567891'
+                'name' => 'Ahmad Fadli',
+                'email' => 'ahmad@gmail.com',
+                'phone' => '081234567890',
+                'address' => 'Jl. Soekarno No. 45, Bukittinggi'
+            ],
+            [
+                'name' => 'Siti Rahma',
+                'email' => 'siti@gmail.com',
+                'phone' => '083456789012',
+                'address' => 'Jl. Diponegoro No. 67, Padang'
             ],
             [
                 'name' => 'Budi Santoso',
-                'email' => 'budi.santoso@email.com',
-                'phone' => '081234567892'
+                'email' => 'budi@gmail.com',
+                'phone' => '085678901234',
+                'address' => 'Jl. Veteran No. 89, Lima Puluh Kota'
             ],
             [
-                'name' => 'Dewi Sartika',
-                'email' => 'dewi.sartika@email.com',
-                'phone' => '081234567893'
-            ],
-            [
-                'name' => 'Joko Widodo',
-                'email' => 'joko.widodo@email.com',
-                'phone' => '081234567894'
+                'name' => 'Maya Sari',
+                'email' => 'maya@gmail.com',
+                'phone' => '087890123456',
+                'address' => 'Jl. Pahlawan No. 34, Payakumbuh'
             ]
         ];
 

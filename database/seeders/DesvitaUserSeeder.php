@@ -14,20 +14,11 @@ class DesvitaUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create Admin User
         User::create([
-            'name' => 'Desvita Admin',
+            'name' => 'Admin Desvita',
             'email' => 'desvitaputri65@gmail.com',
-            'password' => Hash::make('Vita1112'),
+            'password' => Hash::make('desvita123'),
             'role' => 'admin',
-        ]);
-
-        // Create Regular User
-        User::create([
-            'name' => 'Desvita User',
-            'email' => 'user@desvita.com',
-            'password' => Hash::make('password'),
-            'role' => 'user',
         ]);
     }
 }

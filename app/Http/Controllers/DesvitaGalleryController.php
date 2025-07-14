@@ -3,102 +3,67 @@
 namespace App\Http\Controllers;
 
 use App\Models\DesvitaGallery;
+use App\Models\DesvitaDestination;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 
 class DesvitaGalleryController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth', 'admin']);
-    }
-
     public function index()
     {
-        $galleries = DesvitaGallery::orderBy('order')->get();
-        return view('desvita.admin.gallery.index', compact('galleries'));
+        $galleries = DesvitaGallery::with('destination')->orderBy('order')->get();
+        $destinations = DesvitaDestination::orderBy('name')->get();
+        return view('desvita.admin.gallery.index', compact('galleries', 'destinations'));
     }
 
     public function uploadGallery(Request $request)
     {
-        try {
-            // Pastikan hanya admin yang bisa upload
-            if (auth()->user()->role !== 'admin') {
-                return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk upload foto.');
-            }
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'caption' => 'nullable|string|max:255',
+            'destination_id' => 'nullable|exists:desvita_destinations,id',
+        ]);
 
-            $request->validate([
-                'gallery_images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB max
-            ]);
+        $image = $request->file('image');
+        $imagePath = $image->store('gallery', 'public');
 
-            $uploadedImages = [];
+        $lastOrder = DesvitaGallery::max('order') ?? 0;
 
-            if ($request->hasFile('gallery_images')) {
-                foreach ($request->file('gallery_images') as $image) {
-                    $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-                    $path = $image->storeAs('gallery', $filename, 'public');
+        DesvitaGallery::create([
+            'image' => $imagePath,
+            'caption' => $request->caption,
+            'destination_id' => $request->destination_id,
+            'order' => $lastOrder + 1,
+        ]);
 
-                    $gallery = DesvitaGallery::create([
-                        'image_path' => $path,
-                        'caption' => $image->getClientOriginalName(),
-                        'order' => DesvitaGallery::count() + 1
-                    ]);
-
-                    $uploadedImages[] = $gallery;
-                }
-            }
-
-            return redirect()->back()->with('success', count($uploadedImages) . ' foto berhasil diupload!');
-        } catch (\Exception $e) {
-            Log::error('Upload gallery error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat upload: ' . $e->getMessage());
-        }
+        return redirect()->route('admin.gallery.index')
+            ->with('success', 'Gambar berhasil diupload');
     }
 
     public function deleteGallery(DesvitaGallery $gallery)
     {
-        try {
-            // Pastikan hanya admin yang bisa hapus
-            if (auth()->user()->role !== 'admin') {
-                return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menghapus foto.');
-            }
-
-            // Hapus file dari storage
-            if (Storage::disk('public')->exists($gallery->image_path)) {
-                Storage::disk('public')->delete($gallery->image_path);
-            }
-
-            $gallery->delete();
-
-            return redirect()->back()->with('success', 'Foto berhasil dihapus!');
-        } catch (\Exception $e) {
-            Log::error('Delete gallery error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus foto: ' . $e->getMessage());
+        if ($gallery->image) {
+            Storage::disk('public')->delete($gallery->image);
         }
+
+        $gallery->delete();
+
+        return redirect()->route('admin.gallery.index')
+            ->with('success', 'Gambar berhasil dihapus');
     }
 
     public function reorderGallery(Request $request)
     {
-        try {
-            // Pastikan hanya admin yang bisa reorder
-            if (auth()->user()->role !== 'admin') {
-                return response()->json(['error' => 'Unauthorized'], 403);
-            }
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.id' => 'required|exists:desvita_galleries,id',
+            'items.*.order' => 'required|integer|min:0',
+        ]);
 
-            $request->validate([
-                'gallery_ids' => 'required|array',
-                'gallery_ids.*' => 'exists:desvita_galleries,id'
-            ]);
-
-            foreach ($request->gallery_ids as $index => $id) {
-                DesvitaGallery::where('id', $id)->update(['order' => $index + 1]);
-            }
-
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            Log::error('Reorder gallery error: ' . $e->getMessage());
-            return response()->json(['error' => 'Terjadi kesalahan saat reorder'], 500);
+        foreach ($request->items as $item) {
+            DesvitaGallery::where('id', $item['id'])->update(['order' => $item['order']]);
         }
+
+        return response()->json(['message' => 'Urutan galeri berhasil diperbarui']);
     }
-}
+} 

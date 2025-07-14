@@ -10,10 +10,17 @@ class DesvitaTourist extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'name',
         'email',
         'phone',
+        'address',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function bookings()
     {
@@ -22,6 +29,6 @@ class DesvitaTourist extends Model
 
     public function reviews()
     {
-        return $this->hasMany(DesvitaReview::class, 'tourist_id');
+        return $this->hasMany(DesvitaReview::class);
     }
-}
+} 

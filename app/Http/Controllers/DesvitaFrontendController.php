@@ -3,44 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Models\DesvitaDestination;
-use App\Models\DesvitaBooking;
 use Illuminate\Http\Request;
 
 class DesvitaFrontendController extends Controller
 {
-    public function index()
+    public function home()
     {
-        $destinations = DesvitaDestination::all();
+        $destinations = DesvitaDestination::take(6)->get();
         return view('desvita.frontend.home', compact('destinations'));
     }
 
-    public function show(DesvitaDestination $destination)
+    public function about()
     {
-        $destination->load('galleries');
-        
-        // Get booking history for this destination
-        $bookingStats = [
-            'total' => DesvitaBooking::where('destination_id', $destination->id)->count(),
-            'completed' => DesvitaBooking::where('destination_id', $destination->id)
-                ->where('status', 'completed')
-                ->count(),
-            'upcoming' => DesvitaBooking::where('destination_id', $destination->id)
-                ->whereIn('status', ['pending', 'confirmed'])
-                ->where('booking_date', '>=', now())
-                ->count()
-        ];
-        
-        return view('desvita.frontend.destinations.show', compact('destination', 'bookingStats'));
-    }
-
-    public function destinations()
-    {
-        $destinations = DesvitaDestination::all();
-        return view('desvita.frontend.destinations.index', compact('destinations'));
+        return view('desvita.frontend.about');
     }
 
     public function contact()
     {
         return view('desvita.frontend.contact');
     }
-}
+
+    public function destinations()
+    {
+        $destinations = DesvitaDestination::paginate(12);
+        return view('desvita.frontend.destinations.index', compact('destinations'));
+    }
+
+    public function showDestination(DesvitaDestination $destination)
+    {
+        return view('desvita.frontend.destinations.show', compact('destination'));
+    }
+} 

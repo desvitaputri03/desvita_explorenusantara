@@ -1,310 +1,334 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin Dashboard') - MyWisata</title>
+    <title>@yield('title') - Admin Panel</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary-color: #20b2aa;
-            --secondary-color: #48cae4;
-            --success-color: #06b6d4;
-            --warning-color: #f59e0b;
-            --info-color: #0891b2;
-            --danger-color: #ef4444;
+            --primary-color: #20b2aa;    /* Biru tosca */
+            --secondary-color: #48cae4;  /* Biru muda */
+            --accent-color: #06b6d4;     /* Cyan */
+            --success-color: #10b981;    /* Hijau */
+            --warning-color: #f59e0b;    /* Orange */
+            --danger-color: #ef4444;     /* Merah */
             --light-color: #f8fafc;
             --dark-color: #1e293b;
-            --accent-color: #0ea5e9;
-            --gradient-primary: linear-gradient(135deg, #20b2aa 0%, #48cae4 100%);
-            --gradient-secondary: linear-gradient(135deg, #48cae4 0%, #06b6d4 100%);
-            --gradient-success: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-            --gradient-info: linear-gradient(135deg, #0891b2 0%, #0ea5e9 100%);
-            --gradient-accent: linear-gradient(135deg, #0ea5e9 0%, #20b2aa 100%);
         }
 
         * {
             font-family: 'Poppins', sans-serif;
         }
-        
-        .sidebar {
+
+        body {
             min-height: 100vh;
-            background: var(--gradient-primary);
-            color: white;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 5px 0 20px rgba(0,0,0,0.1);
+            background-color: var(--light-color);
         }
 
-        .sidebar::before {
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 1rem;
+            color: white;
+            z-index: 1000;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.8rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .sidebar .nav-link i {
+            width: 25px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+        }
+
+        /* Navbar */
+        .admin-navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            border-radius: 1rem;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="rgba(255,255,255,0.1)"><circle cx="50" cy="50" r="2"/></svg>');
-            background-size: 20px 20px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
         }
-        
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.9);
-            padding: 15px 20px;
-            border-radius: 15px;
-            margin: 8px 15px;
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Stats Card */
+        .stats-card {
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .stats-icon {
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover .stats-icon {
+            transform: scale(1.1);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
             font-weight: 500;
-        }
-        
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            background: rgba(255,255,255,0.2);
-            color: white;
-        }
-        
-        .main-content {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-        }
-        
-        .navbar-custom {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-        }
-        
-        .content-wrapper {
-            padding: 40px;
-        }
-        
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .btn-custom {
-            border-radius: 25px;
-            padding: 12px 25px;
-            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
         .btn-primary {
-            background: var(--gradient-primary);
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             border: none;
         }
 
-        .btn-success {
-            background: var(--gradient-success);
-            border: none;
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(32, 178, 170, 0.3);
         }
 
-        .btn-warning {
-            background: var(--gradient-warning);
-            border: none;
-        }
-
-        .btn-info {
-            background: var(--gradient-info);
-            border: none;
-        }
-
-        .btn-danger {
-            background: var(--danger-color);
-            border: none;
-        }
-
-        .btn-secondary {
-            background: var(--gradient-secondary);
-            border: none;
-        }
-
-        /* Sidebar brand styling */
-        .sidebar-brand {
-            padding: 2rem 1.5rem;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            margin-bottom: 1rem;
-        }
-
-        .sidebar-brand .brand-icon {
-            width: 60px;
-            height: 60px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            font-size: 1.5rem;
-        }
-
-        .sidebar-brand h5 {
-            margin-bottom: 0.5rem;
+        /* Tables */
+        .table th {
             font-weight: 600;
+            background-color: var(--light-color);
+            border-bottom: 2px solid var(--primary-color);
         }
 
-        .sidebar-brand small {
-            opacity: 0.8;
+        /* Status Badges */
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 500;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-confirmed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-completed {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* User Menu */
+        .user-menu {
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+        }
+
+        .user-menu .dropdown-item {
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .user-menu .dropdown-item:hover {
+            background-color: var(--light-color);
+            transform: translateX(5px);
+        }
+
+        /* Alerts */
+        .alert {
+            border-radius: 1rem;
+            border: none;
+            padding: 1rem 1.5rem;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+        }
+
+        /* Forms */
+        .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(32, 178, 170, 0.25);
+        }
+
+        .input-group-text {
+            border: 2px solid #e2e8f0;
+            background-color: var(--light-color);
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
-                position: fixed;
-                z-index: 1000;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
+                width: 100%;
+                height: auto;
+                position: relative;
             }
-
-            .sidebar.show {
-                transform: translateX(0);
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
             }
-
-            .content-wrapper {
-                padding: 20px;
+            
+            .admin-navbar {
+                margin-top: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 px-0">
-                <div class="sidebar p-0">
-                    <div class="sidebar-brand">
-                        <div class="brand-icon">
-                            <i class="fas fa-mountain"></i>
-                        </div>
-                        <h5>MyWisata</h5>
-                        <small>Admin Panel</small>
-                    </div>
-                    
-                    <nav class="nav flex-column">
-                        <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
-                            <i class="fas fa-tachometer-alt me-3"></i>Dashboard
-                        </a>
-                        <a class="nav-link {{ request()->routeIs('admin.destinations.*') ? 'active' : '' }}" href="{{ route('admin.destinations.index') }}">
-                            <i class="fas fa-map-marker-alt me-3"></i>Destinasi
-                        </a>
-                        <a class="nav-link {{ request()->routeIs('admin.tourists.*') ? 'active' : '' }}" href="{{ route('admin.tourists.index') }}">
-                            <i class="fas fa-users me-3"></i>Wisatawan
-                        </a>
-                        <a class="nav-link {{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}" href="{{ route('admin.bookings.index') }}">
-                            <i class="fas fa-calendar-check me-3"></i>Booking
-                        </a>
-                        <a class="nav-link {{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}" href="{{ route('admin.reviews.index') }}">
-                            <i class="fas fa-star me-3"></i>Review
-                        </a>
-                        <a class="nav-link {{ request()->routeIs('admin.gallery.*') ? 'active' : '' }}" href="{{ route('admin.gallery.index') }}">
-                            <i class="fas fa-images me-3"></i>Galeri
-                        </a>
-                        <hr class="my-4" style="border-color: rgba(255,255,255,0.2);">
-                        <a class="nav-link {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}" href="{{ route('admin.profile.edit') }}">
-                            <i class="fas fa-user-cog me-3"></i>Profil
-                        </a>
-                        <a class="nav-link" href="{{ url('/') }}" target="_blank">
-                            <i class="fas fa-home me-3"></i>Lihat Website
-                        </a>
-                        <form action="{{ route('logout') }}" method="POST" class="mt-2">
-                            @csrf
-                            <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent">
-                                <i class="fas fa-sign-out-alt me-3"></i>Logout
-                            </button>
-                        </form>
-                    </nav>
-                </div>
-            </div>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="d-flex align-items-center mb-4 mt-2">
+            <i class="fas fa-mountain fa-2x me-2"></i>
+            <h4 class="mb-0">MyWisata Admin</h4>
+        </div>
+        
+        <nav class="nav flex-column">
+            <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="{{ route('admin.destinations.index') }}" class="nav-link {{ request()->routeIs('admin.destinations.*') ? 'active' : '' }}">
+                <i class="fas fa-mountain"></i> Destinasi
+            </a>
+            <a href="{{ route('admin.tourists.index') }}" class="nav-link {{ request()->routeIs('admin.tourists.*') ? 'active' : '' }}">
+                <i class="fas fa-users"></i> Wisatawan
+            </a>
+            <a href="{{ route('admin.bookings.index') }}" class="nav-link {{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}">
+                <i class="fas fa-calendar-check"></i> Pemesanan
+            </a>
+            <a href="{{ route('admin.reviews.index') }}" class="nav-link {{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}">
+                <i class="fas fa-star"></i> Ulasan
+            </a>
+            <a href="{{ route('admin.gallery.index') }}" class="nav-link {{ request()->routeIs('admin.gallery.*') ? 'active' : '' }}">
+                <i class="fas fa-images"></i> Galeri
+            </a>
+        </nav>
+    </div>
 
-            <!-- Main Content -->
-            <div class="col-md-9 col-lg-10 px-0">
-                <div class="main-content">
-                    <!-- Top Navbar -->
-                    <nav class="navbar navbar-custom">
-                        <div class="container-fluid">
-                            <div class="d-flex align-items-center">
-                                <button class="btn btn-outline-primary d-md-none me-3" id="sidebarToggle">
-                                    <i class="fas fa-bars"></i>
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Navbar -->
+        <nav class="admin-navbar">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">@yield('title')</h4>
+                @auth
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle d-flex align-items-center shadow-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 50px; padding: 8px 20px;">
+                        <i class="fas fa-user-circle me-2"></i>
+                        {{ Auth::user()->name }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="border-radius: 15px; border: none; margin-top: 10px;">
+                        <li>
+                            <a class="dropdown-item py-2 px-4" href="{{ route('admin.profile.edit') }}">
+                                <i class="fas fa-user-edit me-2"></i>Edit Profil
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 px-4" href="{{ route('admin.profile.password') }}">
+                                <i class="fas fa-key me-2"></i>Ubah Password
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider mx-2"></li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="dropdown-item py-2 px-4 text-danger">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Keluar
                                 </button>
-                                <h4 class="mb-0">
-                                    <i class="fas fa-chart-line me-2 text-primary"></i>
-                                    @yield('title', 'Admin Dashboard')
-                                </h4>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <div class="dropdown">
-                                    <button class="btn btn-outline-primary dropdown-toggle btn-custom" type="button" data-bs-toggle="dropdown">
-                                        <i class="fas fa-user me-2"></i>{{ Auth::user()->name }}
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="{{ route('admin.profile.edit') }}"><i class="fas fa-user-cog me-2"></i>Profil</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </nav>
-
-                    <!-- Content -->
-                    <div class="content-wrapper">
-                        @yield('content')
-                    </div>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
+                @endauth
             </div>
+        </nav>
+
+        @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
+        @endif
+
+        @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+
+        @yield('content')
     </div>
 
-    <!-- Modal Fitur Belum Tersedia -->
-    <div class="modal fade" id="fiturBelumTersediaModal" tabindex="-1" aria-labelledby="fiturBelumTersediaLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="fiturBelumTersediaLabel">Fitur Belum Tersedia</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            Fitur ini belum tersedia. Akan hadir pada pengembangan selanjutnya.
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Toggle sidebar on mobile
-        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('show');
-        });
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const sidebar = document.querySelector('.sidebar');
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            
-            if (window.innerWidth <= 768) {
-                if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
-                    sidebar.classList.remove('show');
-                }
-            }
-        });
-
-        // Add active class to current nav item
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentPath = window.location.pathname;
-            const navLinks = document.querySelectorAll('.nav-link');
-            
-            navLinks.forEach(link => {
-                if (link.getAttribute('href') === currentPath) {
-                    link.classList.add('active');
-                }
-            });
-        });
-    </script>
 </body>
 </html> 

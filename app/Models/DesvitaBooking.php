@@ -2,29 +2,35 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DesvitaBooking extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'destination_id',
         'tourist_id',
+        'destination_id',
         'booking_date',
         'number_of_people',
-        'special_requests',
+        'total_price',
         'status',
+        'notes',
+        'payment_due_date'
     ];
 
-    public function destination()
-    {
-        return $this->belongsTo(DesvitaDestination::class, 'destination_id');
-    }
+    protected $casts = [
+        'booking_date' => 'datetime',
+    ];
 
     public function tourist()
     {
         return $this->belongsTo(DesvitaTourist::class, 'tourist_id');
     }
-}
+
+    public function destination()
+    {
+        return $this->belongsTo(DesvitaDestination::class, 'destination_id');
+    }
+} 

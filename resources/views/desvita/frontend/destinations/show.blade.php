@@ -240,9 +240,9 @@
                         </div>
                         <div class="feature-item">
                             <h5>Rating</h5>
-                            <p>4.8/5 (Berdasarkan ulasan pengunjung)</p>
+                            <p>{{ number_format($destination->reviews->avg('rating') ?? 0, 1) }}/5 ({{ $destination->reviews->count() }} ulasan)</p>
                         </div>
-                        @if($bookingStats['total'] > 0)
+                        @if(isset($bookingStats) && $bookingStats['total'] > 0)
                         <div class="feature-item">
                             <h5>History Booking</h5>
                             <div class="d-flex flex-column gap-2">
@@ -273,7 +273,7 @@
                             </div>
                         </div>
                         <div class="mt-4">
-                            <a href="{{ route('frontend.booking.create', $destination) }}" class="btn btn-primary btn-custom w-100 mb-2">
+                            <a href="{{ route('booking.create', $destination) }}" class="btn btn-primary btn-custom w-100 mb-2">
                                 Booking Sekarang
                             </a>
                         </div>

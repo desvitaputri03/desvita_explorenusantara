@@ -13,6 +13,7 @@ class DesvitaDestination extends Model
         'name',
         'description',
         'location',
+        'price',
         'image',
     ];
 
@@ -30,4 +31,4 @@ class DesvitaDestination extends Model
     {
         return $this->hasMany(DesvitaGallery::class, 'destination_id');
     }
-}
+} 

@@ -2,77 +2,66 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\DesvitaDestination;
 use App\Models\DesvitaTourist;
 use App\Models\DesvitaBooking;
 use App\Models\DesvitaReview;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class DesvitaAdminController extends Controller
 {
-    public function index()
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('admin');
+    }
+
+    public function dashboard()
     {
         $stats = [
             'destinations' => DesvitaDestination::count(),
             'tourists' => DesvitaTourist::count(),
             'bookings' => DesvitaBooking::count(),
             'reviews' => DesvitaReview::count(),
-            'pending_bookings' => DesvitaBooking::where('status', 'pending')->count(),
-            'confirmed_bookings' => DesvitaBooking::where('status', 'confirmed')->count(),
-            'avg_rating' => DesvitaReview::avg('rating') ?? 0
+            'recent_bookings' => DesvitaBooking::with(['tourist', 'destination'])
+                ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->get(),
+            'recent_reviews' => DesvitaReview::with(['tourist', 'destination'])
+                ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->get(),
         ];
 
-        $recent_bookings = DesvitaBooking::with(['destination', 'tourist'])
-            ->latest()
-            ->take(5)
-            ->get();
-
-        $recent_reviews = DesvitaReview::with(['destination', 'tourist'])
-            ->latest()
-            ->take(5)
-            ->get();
-
-        return view('desvita.admin.dashboard', compact('stats', 'recent_bookings', 'recent_reviews'));
+        return view('desvita.admin.dashboard', compact('stats'));
     }
 
-    // Edit Profil Admin
     public function editProfile()
     {
-        $admin = Auth::user();
-        return view('desvita.admin.profile.edit', compact('admin'));
+        return view('desvita.admin.profile.edit', [
+            'user' => Auth::user()
+        ]);
     }
 
     public function updateProfile(Request $request)
     {
-        $admin = Auth::user();
-        if ($request->has('update_password')) {
-            // Proses ubah password
-            $request->validate([
-                'current_password' => 'required',
-                'password' => 'required|string|min:8|confirmed',
-            ]);
-            if (!Hash::check($request->current_password, $admin->password)) {
-                return back()->withErrors(['current_password' => 'Password lama salah.'])->withInput();
-            }
-            $admin->password = Hash::make($request->password);
-            $admin->save();
-            return redirect()->route('admin.profile.edit')->with('success_password', 'Password berhasil diubah!');
-        } else {
-            // Proses update profil
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email,' . $admin->id,
-            ]);
-            $admin->name = $request->name;
-            $admin->email = $request->email;
-            $admin->save();
-            return redirect()->route('admin.profile.edit')->with('success_profile', 'Profil berhasil diperbarui!');
-        }
+        $user = Auth::user();
+        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        return back()->with('success', 'Profil berhasil diperbarui.');
     }
 
-    // Ubah Password Admin
     public function editPassword()
     {
         return view('desvita.admin.profile.password');
@@ -80,16 +69,21 @@ class DesvitaAdminController extends Controller
 
     public function updatePassword(Request $request)
     {
-        $admin = Auth::user();
         $request->validate([
             'current_password' => 'required',
             'password' => 'required|string|min:8|confirmed',
         ]);
-        if (!Hash::check($request->current_password, $admin->password)) {
-            return back()->withErrors(['current_password' => 'Password lama salah.']);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Password saat ini tidak sesuai.']);
         }
-        $admin->password = Hash::make($request->password);
-        $admin->save();
-        return redirect()->route('admin.settings.edit')->with('success', 'Password berhasil diubah!');
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return back()->with('success', 'Password berhasil diubah.');
     }
-}
+} 
